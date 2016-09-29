@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<div id="div1">
+<p id="p1">This is a paragraph.</p>
+<p id="p2">This is another paragraph.</p>
+</div>
+<div id="div2">
+	Name: <input type="text" id="summary" placeholder="Summary"><br>
+	<input type="text" id="description" placeholder="Description" style="width: 500px;height: 200px"><br>
+	<button onclick="removeIssue()">Remove this issue</button>
+</div>
+
+<script>
+var parent = document.getElementById("div1");
+var child = document.getElementById("p1");
+parent.removeChild(child);
+function removeIssue(){
+	var parent2 = document.getElementById("div2");
+	var child2 = document.getElementById("summary");
+	parent2.removeChild(child2);
+}
+</script>
+
+</body>
+</html>
