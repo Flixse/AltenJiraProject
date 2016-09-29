@@ -1,13 +1,23 @@
 <!DOCTYPE html>
 <html>
-<script src="jquery-3.1.0.min.js"></script>
-<script src='jiraCommunication.js'></script>
-<body>
-<h1>Login</h1><br>
-<input type="text" id="username" placeholder="username"><br>
-<input type="password" id="password" placeholder="password"><br>
-<button onclick="login()">Login</button>
-</body>
-<script>
-</script>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="description" content="Login page">
+    <title>Login</title>
+    <link rel="stylesheet" type="text/css" href="styling.css">    
+  </head>
+  
+  <script src="jquery-3.1.0.min.js"></script>
+  <script src='jiraCommunication.js'></script>
+  
+  <body>
+  <div id="container">
+    <img id="jira" src="jira_logo.png" alt="JIRA">
+    <input id="username" type="text" id="username" placeholder="Username"><br>
+    <input id="password" type="password" id="password" placeholder="Password"><br>
+    <button id="login" onclick="login()">Login</button>
+  </div>
+  </body>
+  
 </html>
