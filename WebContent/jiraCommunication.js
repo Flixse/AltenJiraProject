@@ -4,7 +4,7 @@ function login(){
 	var username = document.getElementById("username").value;
 	window.localStorage.setItem("username", username);
 	var password = document.getElementById("password").value;
-	var test = '{"username": "' + username + '", "password": "' + password + '"}';
+	var test = '{"username": ' + username + ', "password": ' + password + '"}';
 	console.log("JSON data : " + test);
 	console.log(username + "  :  " + password);
 	$.ajax({
@@ -13,7 +13,7 @@ function login(){
 	    type: 'POST',
 	    dataType: 'json',
 	    contentType: "application/json",
-	    data: test,
+	    data: '{"username": "' + username + '", "password": "' + password + '"}',
 	    headers:{
 	    	"X-Atlassian-Token":"nocheck"
 	    },
@@ -75,12 +75,15 @@ function getListOfIssueTypes(){
 	    type: 'GET',
 	    contentType: "application/json",
 	    dataType: "json",
-	    success: function(response){	    	
+	    success: function(response){
+	    	$("body").append('<div></div>');
 	    	$.each(response, function(key, value){
-	    		$(".issuetypes").append('<input type="checkbox" id = "' + value.name + '" onchange="whatStateIsCheckBox(this)"  />');
-	    		$(".issuetypes").append('<p class="issues" id="'+value.id+'">'+value.name+'</p>');	    	  
+	    	    $("div").append('<p id="'+value.id+'">'+value.name+'</p>');
+	    	    $("div").append('<input type="checkbox" id = "' + value.name + '" onchange="whatStateIsCheckBox(this)"  />');
+	    	    
 	    	});
-	    	$(".proceed").append('<a class="linkbutton" href="sendProblem.html">Proceed</a>');
+	    	$("body").append('<hr><a href="sendProblem.html">To submission page</a><br><hr>');
+	    	$("body").append('<a href="getAllOpenProblems.html">To open issues page</a><br><hr>');
 	    	console.log(response);
 	    },
 	    error:function(error){
@@ -90,17 +93,18 @@ function getListOfIssueTypes(){
 	});
 }
 function getAssignees(list){
+	var url = 'http://172.25.8.18:8080/rest/api/2/project/AM/role/10100';
 	$.ajax({
 		cache: false,
-		url: 'http://172.25.8.18:8080/rest/api/2/project/AM/role/10100',
-	    type: 'GET',
+		url: 'http://172.25.8.18:8080/rest/api/2/user/assignable/search?project=JA',
+		type: 'GET',
 	    dataType : 'json',
 	    headers:{
 	    	"X-Atlassian-Token":"nocheck"
 	    },
 	    success: function(response){
-	    	var actors = response.actors;
-	    	$.each(actors, function(key, value){
+	    	console.log(response);
+	    	$.each(response, function(key, value){
 	    		assignees.push(value.name);
 	    	});
 	    	fillInSendProblemPage(list);
@@ -128,9 +132,11 @@ function getIssuesOfReporter(){
 	    	var summary = "";
 	    	var description = "";
 	    	var status = "";
+	    	var issueId = "";
 	    	var html = "";
 	    	$.each(response.issues, function(key, value){
 	    	    if(status !== "closed" || status !== "read" ||status !== "solved"){	
+	    	    	issueId = value.id;
 	    	    	assignee = value.fields.assignee.displayName;
 		    	    if(assignee == null){
 		    	    	assignee = "Assignee is not known";
@@ -148,12 +154,13 @@ function getIssuesOfReporter(){
 		    	    	description = "No description given for this issue";
 		    	    }
 		    	    status = value.fields.status.name;
-	    	    	html = '<div>'
+	    	    	html = '<div id="' + issueId + '">'
 		    	    	+ '<p>Type : ' + issueType + '</p>'
 		    	    	+ '<p>Status : ' + status + '</p>'
 		    	    	+ '<p>Summary : ' + summary + '</p>'
 		    	    	+ '<p>Description : ' + description + '</p>'
 		    	    	+ '<p>Assignee : ' + assignee + '</p>'
+		    	    	+ '<button onclick="createHtmlOfCommentsPage(' + issueId + ')">Comments</button><br>'
 		    	    	+ '<hr>'
 		    	    	+ '</div>';
 		    	    $("body").append(html);
@@ -166,15 +173,83 @@ function getIssuesOfReporter(){
 	    }
 	});
 }
-
+function createHtmlOfCommentsPage(id){
+	window.localStorage.setItem("issueIdOpenComments", id);
+	window.location.href = "http://172.25.8.14:8080/AltenJiraProject/WebContent/commentsOfOpenIssues.html"
+}
+function getCommentsOfOpenIssues(issueId){
+	console.log("issueId = " +issueId);
+	var fullUrl = 'http://172.25.8.18:8080/rest/api/2/issue/' + issueId + '/comment';
+	console.log(fullUrl);
+	$.ajax({
+		cache: false,
+		url: fullUrl,
+	    type: 'GET',
+	    dataType: 'json',
+	    contentType: "application/json",
+	    headers:{
+	    	"X-Atlassian-Token":"nocheck"
+	    },
+	    success: function(response){
+	    	$("body").append('<p>test</p>');
+	    	var html = '<div>';
+	    	$.each(response.comments, function(key, value){
+	    		console.log("body = " + value.body);
+	    		html = html
+	    	    	+ '<p>Comment ' + (key + 1) + ' : Added on ' + value.created + '</p>'
+	    	    	+ '<p>Created by : ' + value.author.name + '</p>'
+	    	    	+ '<textarea readonly  rows = "20"  style="width:500px;height:200px;background:GhostWhite ;">'+value.body+'</textarea>'
+	    	    	+ '<hr>';
+	    	});
+	    	
+	    	html = html + '<p>Add a comment :</p>'
+	    				+ '<textarea id="comment" rows = "20" placeholder="Comment" style="width: 500px;height: 200px;"></textarea>'
+	    				+ '<button onclick="createCommentByIssueId(' + window.localStorage.getItem("issueIdOpenComments") + ')">Send comment</button>'
+	    				+ '<hr></div>';
+	    	console.log(html);
+	    	$("body").append(html);
+	    },
+	    error:function(error){
+	    	console.log((error));
+	    }
+	});
+}
+function createCommentByIssueId(issueId){
+	var comment = document.getElementById('comment').value
+	var fullUrl = 'http://172.25.8.18:8080/rest/api/2/issue/' + issueId + '/comment';
+	console.log(fullUrl);
+	$.ajax({
+		cache: false,
+		url: fullUrl,
+	    type: 'POST',
+	    contentType: 'application/json',
+	    dataType: 'json',
+	    contentType: "application/json",
+	    headers:{
+	    	"X-Atlassian-Token":"nocheck"
+	    },
+	    data: '{'
+	    	+ '"body": "' + comment + '",'
+	    	+ '"visibility": {'
+	    	+ '"value": "All Users"'
+    		+ '}'
+			+ '}',
+	    success: function(response){
+	    	console.log(response);
+	    },
+	    error:function(error){
+	    	console.log((error));
+	    }
+	});	
+}
 function fillInSendProblemPage(list){
 	console.log("the assignees list size is : " + assignees);
 	console.log(list);
 	issues = list;
 	for(i=0 ; i < list.length; i++){
 		var idOne = list[i];
-		var html = '<div id="' + idOne +'" >' + idOne +': <input type="text" id="summary '+ idOne +'" placeholder="Summary"><br>'
-		+ '<input type="text" id="description '+ idOne + '" placeholder="Description" style="width: 500px;height: 200px"><br> Send to : ';
+		var html = '<div id="' + idOne +'" >' + idOne +': <textarea id="summary '+ idOne +'" placeholder="Summary"></textarea><br>'
+		+ '<textarea id="description '+ idOne + '" placeholder="Description" style="width: 500px;height: 200px"></textarea><br> Send to : ';
 		var dropdown ='<select id="dropdown ' + idOne + '" style="width : 150px;">';
 		for(j=0 ; j < assignees.length ; j++){
 			dropdown = dropdown + '<option value="'+ assignees[j] + '">' + assignees[j] + '</option>';
