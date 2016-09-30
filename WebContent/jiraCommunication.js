@@ -4,7 +4,7 @@ function login(){
 	var username = document.getElementById("username").value;
 	window.localStorage.setItem("username", username);
 	var password = document.getElementById("password").value;
-	var test = '{"username": ' + username + ', "password": ' + password + '"}';
+	var test = '{"username": "' + username + '", "password": "' + password + '"}';
 	console.log("JSON data : " + test);
 	console.log(username + "  :  " + password);
 	$.ajax({
@@ -13,7 +13,7 @@ function login(){
 	    type: 'POST',
 	    dataType: 'json',
 	    contentType: "application/json",
-	    data: '{"username": "' + username + '", "password": "' + password + '"}',
+	    data: test,
 	    headers:{
 	    	"X-Atlassian-Token":"nocheck"
 	    },
@@ -75,15 +75,12 @@ function getListOfIssueTypes(){
 	    type: 'GET',
 	    contentType: "application/json",
 	    dataType: "json",
-	    success: function(response){
-	    	$("body").append('<ul></ul>');
+	    success: function(response){	    	
 	    	$.each(response, function(key, value){
-	    	    $("ul").append('<li id="'+value.id+'">'+value.name+'</li>');
-	    	    $("ul").append('<input type="checkbox" id = "' + value.name + '" onchange="whatStateIsCheckBox(this)"  />');
-	    	    
+	    		$(".issuetypes").append('<input type="checkbox" id = "' + value.name + '" onchange="whatStateIsCheckBox(this)"  />');
+	    		$(".issuetypes").append('<p class="issues" id="'+value.id+'">'+value.name+'</p>');	    	  
 	    	});
-	    	$("body").append('<hr><a href="sendProblem.html">To submission page</a><br><hr>');
-	    	$("body").append('<a href="getAllOpenProblems.html">To open issues page</a><br><hr>');
+	    	$(".proceed").append('<a class="linkbutton" href="sendProblem.html">Proceed</a>');
 	    	console.log(response);
 	    },
 	    error:function(error){
@@ -199,7 +196,7 @@ function testFunction(element){
 		window.localStorage.setItem("test", JSON.stringify(issues));
 	}
 	if(issues.length === 0){
-		window.location.href = "http://localhost:8080/AltenJiraProject/WebContent/selectProblem.html";
+		window.location.href = "http://172.25.8.14:8080/AltenJiraProject/WebContent/selectProblem.html";
 	}
 }
 function whatStateIsCheckBox(element){
