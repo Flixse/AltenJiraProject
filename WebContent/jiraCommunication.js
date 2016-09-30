@@ -75,15 +75,12 @@ function getListOfIssueTypes(){
 	    type: 'GET',
 	    contentType: "application/json",
 	    dataType: "json",
-	    success: function(response){
-	    	$("body").append('<ul></ul>');
+	    success: function(response){	    	
 	    	$.each(response, function(key, value){
-	    	    $("ul").append('<li id="'+value.id+'">'+value.name+'</li>');
-	    	    $("ul").append('<input type="checkbox" id = "' + value.name + '" onchange="whatStateIsCheckBox(this)"  />');
-	    	    
+	    		$(".issuetypes").append('<input type="checkbox" id = "' + value.name + '" onchange="whatStateIsCheckBox(this)"  />');
+	    		$(".issuetypes").append('<p class="issues" id="'+value.id+'">'+value.name+'</p>');	    	  
 	    	});
-	    	$("body").append('<hr><a href="sendProblem.html">To submission page</a><br><hr>');
-	    	$("body").append('<a href="getAllOpenProblems.html">To open issues page</a><br><hr>');
+	    	$(".proceed").append('<a class="linkbutton" href="sendProblem.html">Proceed</a>');
 	    	console.log(response);
 	    },
 	    error:function(error){

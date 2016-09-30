@@ -1,19 +1,31 @@
 <!DOCTYPE html>
 <html>
-<head>
 
-</head>
-<body onload="getListOfIssueTypes();">
-<h1>What is your problem/question?</h1>
-<div id="result"></div>
-</body>
-<script src="jquery-3.1.0.min.js"></script>
-<script src='jiraCommunication.js'></script>
-<script>
-if (typeof(Storage) !== "undefined") {
-    console.log("web storage support");
-} else {
-    console.log("no web storage support");
-}
-</script>
+  <head>
+    <meta charset="utf-8">
+    <meta name="description" content="Issue selection">
+    <title>Select Issue</title>
+    <link rel="stylesheet" type="text/css" href="issue_styling.css">    
+  </head>
+
+  <body onload="getListOfIssueTypes();">
+    
+    <div class = "container">
+      <img id="jira" src="jira_logo.png" alt="JIRA">
+      <h1>Select issue:</h1>
+      <div class="issuetypes"></div>
+      <div class="linkbuttons">
+        <div class="proceed"></div>
+        <div class="active">
+          <a class="linkbutton" href="getAllOpenProblems.html">Active issues</a>
+        </div>        
+      </div>
+    </div>
+    
+  </body>
+
+  <script src="jquery-3.1.0.min.js"></script>
+  <script src='jiraCommunication.js'></script>
+  
+  
 </html>

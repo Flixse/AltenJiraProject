@@ -1,0 +1,64 @@
+@CHARSET "ISO-8859-1";
+
+body{
+	 font-size: 15px;
+	 font-family: "Arial";
+	 color:#353535;	
+	 background-color:#e4e4e4; 
+}
+
+#container{
+	margin: auto;
+	width: 250px;
+}
+
+#jira{
+	display: block;
+	margin: auto;
+}
+
+.issuetypes{
+	margin: auto;
+	width: 20%;
+	margin-top: 35px;
+}
+
+h1{
+	font-size: 16px; 
+	text-align: center;
+	margin-top: 10px;
+}
+
+input[type=checkbox], select{
+	float: left;
+	margin-left: 20px;
+	margin-right: 12px;
+}
+
+.proceed{
+	text-align: center;
+}
+
+.active{
+	text-align: center;
+}
+
+.linkbuttons{
+	margin: auto;
+	width: 100%;
+	margin-top: 40px;
+}
+
+.linkbutton{
+	display: block;
+	margin: auto;
+	width: 250px;
+	margin-bottom: 12px;
+	text-decoration: none;
+	background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
